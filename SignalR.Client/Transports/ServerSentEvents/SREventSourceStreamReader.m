@@ -98,8 +98,12 @@ typedef enum {
                 if(read > 0) {
                     // Put chunks in the buffer
                     _offset = _offset + read;
-                    
-                    [_buffer add:buffer];
+                    @try {
+                        [_buffer add:buffer];
+                    } @catch (NSException *exception) {
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"DataParsingWasFailed" object:nil];
+                        return;
+                    }
                     while ([_buffer hasChunks]) {
                         NSString *line = [_buffer readLine];
                         
