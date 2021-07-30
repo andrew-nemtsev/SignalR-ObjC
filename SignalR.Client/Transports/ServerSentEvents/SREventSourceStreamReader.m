@@ -92,8 +92,14 @@ typedef enum {
                     [self close];
                     return;
                 }*/
-                buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
                 
+                @try {
+                    buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
+                } @catch (NSException *exception) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"DataParsingWasFailed" object:nil];
+                    return;
+                }
+
                 NSInteger read = [buffer length];
                 if(read > 0) {
                     // Put chunks in the buffer
